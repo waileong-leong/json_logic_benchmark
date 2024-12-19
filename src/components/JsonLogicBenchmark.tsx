@@ -15,12 +15,12 @@ const JsonLogicBenchmark = () => {
         {
             name: 'Simple Comparison',
             rule: { "==": [{ "var": "value" }, 1] },
-            data: Array.from({ length: 100 }, () => ({ value: 1 }))
+            data: Array.from({ length: 50000 }, () => ({ value: 1 }))
         },
         {
             name: 'Data Variable Access',
             rule: { ">=": [{ "var": "temp" }, 20] },
-            data: Array.from({ length: 100 }, () => ({ temp: 25 }))
+            data: Array.from({ length: 50000 }, () => ({ temp: 25 }))
         },
         {
             name: 'Nested Logic',
@@ -30,7 +30,7 @@ const JsonLogicBenchmark = () => {
                     { "<=": [{ "var": "temp" }, 30] }
                 ]
             },
-            data: Array.from({ length: 100 }, () => ({ temp: 25 }))
+            data: Array.from({ length: 50000 }, () => ({ temp: 25 }))
         },
         {
             name: 'Complex Logic',
@@ -47,12 +47,12 @@ const JsonLogicBenchmark = () => {
                     }
                 ]
             },
-            data: Array.from({ length: 100 }, () => ({ temp: 25 }))
+            data: Array.from({ length: 50000 }, () => ({ temp: 25 }))
         },
         {
             name: 'Array Operations',
             rule: { ">=": [{ "var": "reading" }, 20] },
-            data: Array.from({ length: 100 }, () => ({ reading: Math.floor(Math.random() * 10) + 20 }))
+            data: Array.from({ length: 50000 }, () => ({ reading: Math.floor(Math.random() * 10) + 20 }))
         },
         {
             name: 'Complex Data Access',
@@ -62,7 +62,7 @@ const JsonLogicBenchmark = () => {
                     { ">=": [{ "var": "secondary.temp" }, 15] }
                 ]
             },
-            data: Array.from({ length: 100 }, () => ({
+            data: Array.from({ length: 50000 }, () => ({
                 main: { temp: 25 },
                 secondary: { temp: 22 }
             }))
@@ -161,10 +161,11 @@ const JsonLogicBenchmark = () => {
                                     height={250}
                                     data={benchmarkResults}
                                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+
                                 >
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                                    <YAxis label={{ value: 'Time (ms)', angle: -90, position: 'insideLeft' }} />
+                                    <YAxis label={{ value: 'Time (ms)', angle: -90, position: 'insideLeft' }} domain={[0, 100]} />
                                     <Tooltip />
                                     <Legend />
                                     <Line
