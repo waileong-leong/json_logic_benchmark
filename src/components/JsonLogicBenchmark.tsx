@@ -12,13 +12,13 @@ const JsonLogicBenchmark = () => {
     const testCases = [
         {
             name: 'Simple Comparison',
-            rule: { "==": [1, 1] },
-            data: {}
+            rule: { "==": [{ "var": "value" }, 1] },
+            data: Array.from({ length: 100 }, () => ({ value: 1 }))
         },
         {
             name: 'Data Variable Access',
             rule: { ">=": [{ "var": "temp" }, 20] },
-            data: { temp: 25 }
+            data: Array.from({ length: 100 }, () => ({ temp: 25 }))
         },
         {
             name: 'Nested Logic',
@@ -28,7 +28,7 @@ const JsonLogicBenchmark = () => {
                     { "<=": [{ "var": "temp" }, 30] }
                 ]
             },
-            data: { temp: 25 }
+            data: Array.from({ length: 100 }, () => ({ temp: 25 }))
         },
         {
             name: 'Complex Logic',
@@ -45,41 +45,39 @@ const JsonLogicBenchmark = () => {
                     }
                 ]
             },
-            data: { temp: 25 }
+            data: Array.from({ length: 100 }, () => ({ temp: 25 }))
         },
         {
             name: 'Array Operations',
-            rule: {
-                "all": [
-                    { "var": "readings" },
-                    { ">=": [{ "var": "" }, 20] }
-                ]
-            },
-            data: { readings: [25, 28, 22, 24] }
+            rule: { ">=": [{ "var": "reading" }, 20] },
+            data: Array.from({ length: 100 }, () => ({ reading: Math.floor(Math.random() * 10) + 20 }))
         },
         {
             name: 'Complex Data Access',
             rule: {
                 "and": [
-                    { ">=": [{ "var": "sensors.main.temp" }, 20] },
-                    {
-                        "all": [
-                            { "var": "sensors.secondary[*].temp" },
-                            { ">=": [{ "var": "" }, 15] }
-                        ]
-                    }
+                    { ">=": [{ "var": "main.temp" }, 20] },
+                    { ">=": [{ "var": "secondary.temp" }, 15] }
                 ]
             },
-            data: {
-                sensors: {
-                    main: { temp: 25 },
-                    secondary: [
-                        { temp: 22 },
-                        { temp: 21 },
-                        { temp: 23 }
-                    ]
-                }
-            }
+            data: Array.from({ length: 100 }, () => ({
+                main: { temp: 25 },
+                secondary: { temp: 22 }
+            }))
+        },
+        {
+            name: 'Large Dataset Processing',
+            rule: {
+                "and": [
+                    { ">=": [{ "var": "temp" }, 1000] },
+                    { ">=": [{ "var": "humidity" }, 0] },
+                    { "<=": [{ "var": "humidity" }, 100] }
+                ]
+            },
+            data: Array.from({ length: 10000 }, () => ({
+                temp: Math.random() * 100,
+                humidity: Math.random() * 100
+            }))
         }
     ];
 
@@ -88,12 +86,15 @@ const JsonLogicBenchmark = () => {
 
         testCases.forEach(testCase => {
             console.log('Running test:', testCase.name);
+            console.log("data", testCase.data);
             setCurrentTest(testCase.name);
-            const iterations = 10000;
+            const iterations = 10;
             const startTime = performance.now();
 
             for (let i = 0; i < iterations; i++) {
-                jsonLogic.apply(testCase.rule, testCase.data);
+                testCase.data.forEach(item => {
+                    jsonLogic.apply(testCase.rule, item);
+                });
             }
 
             const endTime = performance.now();
@@ -103,7 +104,7 @@ const JsonLogicBenchmark = () => {
                 name: testCase.name,
                 timeMs: averageTime.toFixed(4),
                 complexity: JSON.stringify(testCase.rule).length,
-                result: JSON.stringify(jsonLogic.apply(testCase.rule, testCase.data))
+                result: JSON.stringify(testCase.data.map(item => jsonLogic.apply(testCase.rule, item)))
             });
         });
 
