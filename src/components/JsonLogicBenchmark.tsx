@@ -1,6 +1,8 @@
 // src/components/JsonLogicBenchmark.tsx
 import React, { useState } from 'react';
 import jsonLogic from 'json-logic-js';
+import * as Collapsible from '@radix-ui/react-collapsible';
+import { ChevronDownIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
@@ -69,14 +71,26 @@ const JsonLogicBenchmark = () => {
             name: 'Large Dataset Processing',
             rule: {
                 "and": [
-                    { ">=": [{ "var": "temp" }, 1000] },
-                    { ">=": [{ "var": "humidity" }, 0] },
-                    { "<=": [{ "var": "humidity" }, 100] }
+                    { ">=": [{ "var": "temp" }, 20] },
+                    { "<=": [{ "var": "temp" }, 50] },
+                    { ">=": [{ "var": "humidity" }, 20] },
+                    { "<=": [{ "var": "humidity" }, 50] }
                 ]
             },
-            data: Array.from({ length: 10000 }, () => ({
+            data: Array.from({ length: 50000 }, () => ({
                 temp: Math.random() * 100,
-                humidity: Math.random() * 100
+                humidity: Math.random() * 100,
+                field1: 1,
+                field2: 2,
+                field3: 3,
+                field4: 4,
+                field5: 5,
+                field6: 6,
+                field7: 7,
+                field8: 8,
+                field9: 9,
+                field10: 10
+
             }))
         }
     ];
@@ -88,7 +102,7 @@ const JsonLogicBenchmark = () => {
             console.log('Running test:', testCase.name);
             console.log("data", testCase.data);
             setCurrentTest(testCase.name);
-            const iterations = 10;
+            const iterations = 3;
             const startTime = performance.now();
 
             for (let i = 0; i < iterations; i++) {
@@ -165,20 +179,67 @@ const JsonLogicBenchmark = () => {
                                             <th className="text-left p-2 border-b">Test Case</th>
                                             <th className="text-left p-2 border-b">Avg. Time (ms)</th>
                                             <th className="text-left p-2 border-b">Rule Complexity</th>
-                                            <th className="text-left p-2 border-b">Result</th>
+                                            <th className="text-left p-2 border-b">Rule</th>
+                                            <th className="text-left p-2 border-b">Data & Results</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {benchmarkResults.map((result, index) => (
-                                            <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
-                                                <td className="p-2 border-b">{result.name}</td>
-                                                <td className="p-2 border-b font-mono">{result.timeMs}</td>
-                                                <td className="p-2 border-b font-mono">{result.complexity}</td>
-                                                <td className="p-2 border-b font-mono max-w-xs truncate">
-                                                    {result.result}
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {benchmarkResults.map((result, index) => {
+                                            const testCase = testCases[index];
+                                            return (
+                                                <Collapsible.Root key={index}>
+                                                    <tr className={index % 2 === 0 ? 'bg-gray-50' : ''}>
+                                                        <td className="p-2 border-b">
+                                                            <Collapsible.Trigger className="flex items-center gap-2 w-full text-left">
+                                                                <span className="inline-block">
+                                                                    <ChevronRightIcon className="collapsible-icon" />
+                                                                </span>
+                                                                {result.name}
+                                                            </Collapsible.Trigger>
+                                                        </td>
+                                                        <td className="p-2 border-b font-mono">{result.timeMs}</td>
+                                                        <td className="p-2 border-b font-mono">{result.complexity}</td>
+                                                        <td className="p-2 border-b font-mono">
+                                                            <pre className="max-w-xs overflow-x-auto">
+                                                                {JSON.stringify(testCase.rule, null, 2)}
+                                                            </pre>
+                                                        </td>
+                                                    </tr>
+                                                    <Collapsible.Content>
+                                                        <tr>
+                                                            <td colSpan={4}>
+                                                                <div className="p-4 bg-gray-50">
+                                                                    <table className="nested-table w-full">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th className="px-2">Data</th>
+                                                                                <th className="px-2">Result</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {testCase.data.slice(0, 100).map((item, idx) => (
+                                                                                <tr key={idx}>
+                                                                                    <td className="px-2">
+                                                                                        <pre className="max-w-xs overflow-x-auto">
+                                                                                            {JSON.stringify(item, null, 2)}
+                                                                                        </pre>
+                                                                                    </td>
+                                                                                    <td className="px-2">
+                                                                                        <pre className="max-w-xs overflow-x-auto">
+                                                                                            {JSON.stringify(JSON.parse(result.result)[idx], null, 2)}
+                                                                                        </pre>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            ))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </Collapsible.Content>
+                                                </Collapsible.Root>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </div>

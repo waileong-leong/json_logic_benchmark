@@ -11,9 +11,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -22,6 +24,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -40,3 +43,84 @@
 .read-the-docs {
   color: #888;
 }
+
+.max-w-xs {
+  max-width: 20rem;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: left;
+  font-size: 0.875rem;
+  margin: 0;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+}
+
+.collapsible-trigger {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.collapsible-content {
+  overflow: hidden;
+}
+
+.collapsible-content[data-state='open'] {
+  animation: slideDown 300ms ease-out;
+}
+
+.collapsible-content[data-state='closed'] {
+  animation: slideUp 300ms ease-out;
+}
+
+.collapsible-icon {
+  transition: transform 300ms ease;
+}
+
+[data-state='open'] .collapsible-icon {
+  transform: rotate(90deg);
+}
+
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: var(--radix-collapsible-content-height);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+
+  to {
+    height: 0;
+  }
+}
+
+.nested-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.nested-table th,
+.nested-table td {
+  border: 1px solid #eee;
+  padding: 4px;
+}
+
+.nested-table pre {
+  margin: 0;
+  font-size: 0.75rem;
