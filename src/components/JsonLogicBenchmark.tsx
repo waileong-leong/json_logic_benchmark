@@ -114,12 +114,17 @@ const JsonLogicBenchmark = () => {
             const endTime = performance.now();
             const averageTime = (endTime - startTime) / iterations;
 
-            results.push({
+            const dataWithResult = testCase.data.map(item => {
+                return { ...item, result: jsonLogic.apply(testCase.rule, item) };
+            })
+            const result = {
                 name: testCase.name,
                 timeMs: averageTime.toFixed(4),
                 complexity: JSON.stringify(testCase.rule).length,
-                result: JSON.stringify(testCase.data.map(item => jsonLogic.apply(testCase.rule, item)))
-            });
+                result: dataWithResult
+            };
+
+            results.push(result);
         });
 
         setBenchmarkResults(results);
@@ -212,21 +217,15 @@ const JsonLogicBenchmark = () => {
                                                                     <table className="nested-table w-full">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th className="px-2">Data</th>
                                                                                 <th className="px-2">Result</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            {testCase.data.slice(0, 100).map((item, idx) => (
+                                                                            {result.result.slice(0, 100).map((item, idx) => (
                                                                                 <tr key={idx}>
                                                                                     <td className="px-2">
                                                                                         <pre className="max-w-xs overflow-x-auto">
                                                                                             {JSON.stringify(item, null, 2)}
-                                                                                        </pre>
-                                                                                    </td>
-                                                                                    <td className="px-2">
-                                                                                        <pre className="max-w-xs overflow-x-auto">
-                                                                                            {JSON.stringify(JSON.parse(result.result)[idx], null, 2)}
                                                                                         </pre>
                                                                                     </td>
                                                                                 </tr>
